@@ -47,8 +47,7 @@ export class ResponsesService {
           id: true,
           formId: true,
           createdAt: true,
-          // quick summary: how many answers submitted in this response
-          _count: { select: { answers: true } },
+          _count: { select: { answers: true } }, // answersCount
         },
       }),
     ]);
@@ -87,6 +86,7 @@ export class ResponsesService {
             id: true,
             fieldId: true,
             value: true,
+            // ✅ include field info for label/type/order, but it can be null
             field: {
               select: {
                 id: true,
@@ -103,10 +103,12 @@ export class ResponsesService {
 
     if (!response) throw new NotFoundException('Response not found');
 
-    // sort answers by field order for nicer UI
-    const answers = [...response.answers].sort(
-      (a, b) => (a.field.order ?? 0) - (b.field.order ?? 0),
-    );
+    // ✅ sort answers by field.order when field exists; otherwise push to bottom
+    const answers = [...response.answers].sort((a, b) => {
+      const ao = a.field?.order ?? 999999;
+      const bo = b.field?.order ?? 999999;
+      return ao - bo;
+    });
 
     return {
       id: response.id,
@@ -116,7 +118,7 @@ export class ResponsesService {
         id: a.id,
         fieldId: a.fieldId,
         value: a.value,
-        field: a.field,
+        field: a.field ?? null,
       })),
     };
   }

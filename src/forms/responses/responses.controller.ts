@@ -4,7 +4,7 @@ import { ResponsesService } from './responses.service';
 // Change this import to whatever your project uses:
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
-@Controller('/v1/forms/:formId/responses')
+@Controller('v1/forms/:formId/responses')
 @UseGuards(JwtAuthGuard)
 export class ResponsesController {
   constructor(private readonly responses: ResponsesService) {}
