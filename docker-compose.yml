@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: formflow_postgres
+    environment:
+      POSTGRES_USER: formflow
+      POSTGRES_PASSWORD: formflow
+      POSTGRES_DB: formflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - formflow_pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: formflow_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  formflow_pgdata:

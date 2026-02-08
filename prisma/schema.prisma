@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FormStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum FieldType {
+  TEXT
+  EMAIL
+  NUMBER
+  TEXTAREA
+  SELECT
+  RADIO
+  CHECKBOX
+  DATE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  forms Form[]
+}
+
+model Form {
+  id      String @id @default(cuid())
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  slug        String
+
+  status      FormStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  fields    FormField[]
+  responses FormResponse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, slug])
+  @@index([ownerId])
+}
+
+model FormField {
+  id     String @id @default(cuid())
+  formId String
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  type     FieldType
+  label    String
+  required Boolean   @default(false)
+  order    Int       @default(0)
+
+  placeholder String?
+  options     Json? // e.g. ["Option A", "Option B"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  answers FormAnswer[]
+
+  @@unique([formId, order])
+  @@index([formId])
+}
+
+model FormResponse {
+  id     String @id @default(cuid())
+  formId String
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  answers FormAnswer[]
+
+  @@index([formId])
+}
+
+model FormAnswer {
+  id         String       @id @default(cuid())
+  responseId String
+  response   FormResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  fieldId String
+  field   FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  value String?
+
+  @@index([responseId])
+  @@index([fieldId])
+}

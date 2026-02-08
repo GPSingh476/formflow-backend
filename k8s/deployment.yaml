@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formflow-backend
+  namespace: formflow
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: formflow-backend
+  template:
+    metadata:
+      labels:
+        app: formflow-backend
+    spec:
+      containers:
+        - name: api
+          image: formflow-backend:dev2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: formflow-backend-config
+            - secretRef:
+                name: formflow-backend-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
