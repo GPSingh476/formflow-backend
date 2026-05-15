@@ -11,6 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from '../auth/authenticated-request';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateWebhookDto } from './dto/create-webhook.dto';
 import { UpdateWebhookDto } from './dto/update-webhook.dto';
@@ -22,18 +23,18 @@ export class WebhooksController {
   constructor(private readonly webhooks: WebhooksService) {}
 
   @Post()
-  create(@Req() req: any, @Body() dto: CreateWebhookDto) {
+  create(@Req() req: AuthenticatedRequest, @Body() dto: CreateWebhookDto) {
     return this.webhooks.create(req.user.sub, dto);
   }
 
   @Get()
-  list(@Req() req: any) {
+  list(@Req() req: AuthenticatedRequest) {
     return this.webhooks.list(req.user.sub);
   }
 
   @Patch(':id')
   update(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() dto: UpdateWebhookDto,
   ) {
@@ -41,17 +42,17 @@ export class WebhooksController {
   }
 
   @Delete(':id')
-  remove(@Req() req: any, @Param('id') id: string) {
+  remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.webhooks.remove(req.user.sub, id);
   }
 
   @Get(':id/deliveries')
-  listDeliveries(@Req() req: any, @Param('id') id: string) {
+  listDeliveries(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.webhooks.listDeliveries(req.user.sub, id);
   }
 
   @Post(':id/test')
-  test(@Req() req: any, @Param('id') id: string) {
+  test(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.webhooks.sendTest(req.user.sub, id);
   }
 }

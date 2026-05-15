@@ -6,6 +6,13 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { WebhooksService } from '../webhooks/webhooks.service';
 
+export type SubmitFormPayload = {
+  answers?: Record<string, unknown>;
+  meta?: {
+    startedAt?: unknown;
+  };
+};
+
 @Injectable()
 export class PublicService {
   constructor(
@@ -45,7 +52,7 @@ export class PublicService {
     return form;
   }
 
-  async submitBySlug(slug: string, body: any) {
+  async submitBySlug(slug: string, body: SubmitFormPayload) {
     const answersObj = body?.answers;
     if (!answersObj || typeof answersObj !== 'object') {
       throw new BadRequestException(
@@ -83,7 +90,7 @@ export class PublicService {
       this.validateFieldValue(f, v);
     }
 
-    const durationMs = this.getDurationMs(body?.meta?.startedAt);
+    const durationMs = this.getDurationMs(body.meta?.startedAt);
 
     const result = await this.prisma.$transaction(async (tx) => {
       const response = await tx.formResponse.create({

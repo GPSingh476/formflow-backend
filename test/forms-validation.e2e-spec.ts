@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
+import type { Server } from 'http';
 import { CreateFormDto } from '../src/forms/dto/create-form.dto';
 
 @Controller('v1/forms')
@@ -41,7 +42,9 @@ describe('Forms validation (e2e)', () => {
   });
 
   it('rejects extra fields on POST /v1/forms', () => {
-    return request(app.getHttpServer())
+    const server = app.getHttpServer() as Server;
+
+    return request(server)
       .post('/v1/forms')
       .send({
         title: 'Candidate Intake',

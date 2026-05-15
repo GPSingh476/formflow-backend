@@ -64,6 +64,7 @@ export class FormsService {
     if (form.ownerId !== userId) throw new ForbiddenException('Not your form');
 
     const { ownerId, ...rest } = form;
+    void ownerId;
     return rest;
   }
 

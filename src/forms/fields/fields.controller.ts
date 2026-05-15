@@ -9,6 +9,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from '../../auth/authenticated-request';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { FieldsService } from './fields.service';
 import { CreateFieldDto } from '../dto/create-field.dto';
@@ -21,14 +22,14 @@ export class FieldsController {
   constructor(private readonly fieldsService: FieldsService) {}
 
   @Get()
-  list(@Param('formId') formId: string, @Req() req: any) {
+  list(@Param('formId') formId: string, @Req() req: AuthenticatedRequest) {
     return this.fieldsService.list(formId, req.user.sub);
   }
 
   @Post()
   create(
     @Param('formId') formId: string,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Body() dto: CreateFieldDto,
   ) {
     return this.fieldsService.create(formId, req.user.sub, dto);
@@ -38,7 +39,7 @@ export class FieldsController {
   update(
     @Param('formId') formId: string,
     @Param('fieldId') fieldId: string,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Body() dto: UpdateFieldDto,
   ) {
     return this.fieldsService.update(formId, fieldId, req.user.sub, dto);
@@ -48,7 +49,7 @@ export class FieldsController {
   remove(
     @Param('formId') formId: string,
     @Param('fieldId') fieldId: string,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     return this.fieldsService.remove(formId, fieldId, req.user.sub);
   }
@@ -57,7 +58,7 @@ export class FieldsController {
   @Post('reorder')
   reorder(
     @Param('formId') formId: string,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Body() dto: ReorderFieldsDto,
   ) {
     return this.fieldsService.reorder(formId, req.user.sub, dto.orderedIds);

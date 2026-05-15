@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import type { Server } from 'http';
 import { AppController } from './../src/app.controller';
 
 describe('AppController (e2e)', () => {
@@ -20,7 +21,9 @@ describe('AppController (e2e)', () => {
   });
 
   it('/health (GET)', () => {
-    return request(app.getHttpServer()).get('/health').expect(200).expect({
+    const server = app.getHttpServer() as Server;
+
+    return request(server).get('/health').expect(200).expect({
       ok: true,
       service: 'formflow-backend',
     });

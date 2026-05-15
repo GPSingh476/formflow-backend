@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import type { AuthenticatedRequest } from '../../auth/authenticated-request';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { AnalyticsService } from './analytics.service';
 
@@ -11,7 +12,7 @@ export class AnalyticsController {
   getAnalytics(
     @Param('formId') formId: string,
     @Query('days') days = '14',
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     return this.analytics.getFormAnalytics(formId, req.user.sub, Number(days));
   }

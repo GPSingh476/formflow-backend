@@ -1,7 +1,13 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-const DATABASE_URL = process.env.DATABASE_URL;
+const isGenerateCommand = process.argv.includes("generate");
+const DATABASE_URL =
+  process.env.DATABASE_URL ??
+  (isGenerateCommand
+    ? "postgresql://formflow:formflow@localhost:5432/formflow?schema=public"
+    : undefined);
+
 if (!DATABASE_URL) {
   throw new Error("DATABASE_URL is missing. Add it to your .env file.");
 }

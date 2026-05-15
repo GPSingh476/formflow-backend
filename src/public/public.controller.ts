@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { PublicService } from './public.service';
+import { PublicService, type SubmitFormPayload } from './public.service';
 
 @Controller('public')
 export class PublicController {
@@ -11,8 +11,7 @@ export class PublicController {
   }
 
   @Post('forms/:slug/submit')
-  submit(@Param('slug') slug: string, @Body() body: any) {
-    // body example: { answers: { [fieldId]: "value" } }
+  submit(@Param('slug') slug: string, @Body() body: SubmitFormPayload) {
     return this.publicService.submitBySlug(slug, body);
   }
 }

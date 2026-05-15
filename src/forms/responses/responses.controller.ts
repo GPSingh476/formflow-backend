@@ -1,8 +1,7 @@
 import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
-import { ResponsesService } from './responses.service';
-
-// Change this import to whatever your project uses:
+import type { AuthenticatedRequest } from '../../auth/authenticated-request';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { ResponsesService } from './responses.service';
 
 @Controller('v1/forms/:formId/responses')
 @UseGuards(JwtAuthGuard)
@@ -15,7 +14,7 @@ export class ResponsesController {
     @Query('page') page = '1',
     @Query('limit') limit = '20',
     @Query('query') query = '',
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     const userId = req.user.sub;
 
@@ -32,7 +31,7 @@ export class ResponsesController {
   async detail(
     @Param('formId') formId: string,
     @Param('responseId') responseId: string,
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
   ) {
     const userId = req.user.sub;
 
